@@ -1,0 +1,31 @@
+#*/17 * * * * /home/dwdman/jogar_na_dpns24_gmedata.sh
+#*/19 * * * * /home/dwdman/jogar_na_dpns24_dwdinput.sh
+#*/5  * * * * /home/dwdman/migrar_dados_de_dwd_para_a_dpns24.sh
+0 0 * * * find /home/dwdman/ -name "*.bz2.ok" -exec rm -f {} \;
+0 12 * * * find /home/dwdman/ -name "*.bz2.ok" -exec rm -f {} \;
+
+# m h dom mon dow  command
+###############################################################
+#
+00 01 * * * /home/dwdman/datas/ledata_corr.sh 00
+00 13 * * * /home/dwdman/datas/ledata_corr.sh 12
+#
+###############################################################
+#
+# Backups para dados ICONDATA ANT ICONDATA MET  via rsync 00 e 12 Z
+#
+####### ICON4ICONLAM ########
+40 08 * * * /home/dwdman/scripts/exec_bkp_icondataiconlam.sh 00 sam > /home/dwdman/scripts/logs/icon4iconlam_sam00.log 2>&1
+00 09 * * * /home/dwdman/scripts/exec_bkp_icondataiconlam.sh 00 ant > /home/dwdman/scripts/logs/icon4iconlam_ant00.log 2>&1
+40 20 * * * /home/dwdman/scripts/exec_bkp_icondataiconlam.sh 12 sam > /home/dwdman/scripts/logs/icon4iconlam_sam12.log 2>&1
+00 21 * * * /home/dwdman/scripts/exec_bkp_icondataiconlam.sh 12 ant > /home/dwdman/scripts/logs/icon4iconlam_ant12.log 2>&1
+
+###############################################################
+#
+# Backups para dados ICONDATA ANT ICONDATA MET (input do COSMO) via rsync 00 e 12 Z
+#
+####### ICON4COSMO ########
+10 09 * * * /home/dwdman/scripts/exec_bkp_icondatacosmo.sh 00 icondata_met5 > /home/dwdman/scripts/logs/icon4cosmo_met5.log 2>&1
+20 09 * * * /home/dwdman/scripts/exec_bkp_icondatacosmo.sh 00 icondata_ant > /home/dwdman/scripts/logs/icon4cosmo_ant.log 2>&1
+10 21 * * * /home/dwdman/scripts/exec_bkp_icondatacosmo.sh 12 icondata_met5 > /home/dwdman/scripts/logs/icon4cosmo_met5.log 2>&1
+20 21 * * * /home/dwdman/scripts/exec_bkp_icondatacosmo.sh 12 icondata_ant > /home/dwdman/scripts/logs/icon4cosmo_ant.log 2>&1
