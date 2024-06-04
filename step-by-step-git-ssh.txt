@@ -1,0 +1,86 @@
+
+	# CONFIGURAMDO A GIT-SSH, NA MINHA CONTA ALANA
+
+[dwdman@dpns24 ~]$ ls -al ~/.ssh
+total 48
+drwx------  2 dwdman dwdman  4096 Fev 24 04:42 .
+drwxr-xr-x 15 dwdman dwdman  4096 Jun  4 13:29 ..
+-rw-------  1 dwdman dwdman  3132 Mai 23  2023 authorized_keys
+-rw-------  1 dwdman dwdman  1675 Mai 23  2023 id_rsa
+-rw-r--r--  1 dwdman dwdman   395 Mai 23  2023 id_rsa.pub
+-rw-r--r--  1 dwdman dwdman   395 Mai 23  2023 id_rsa.pub.ori
+-rw-r--r--  1 dwdman dwdman   395 Mai 23  2023 id_rsa.pub_root
+-rw-r--r--  1 dwdman dwdman 15990 Mai 23  2023 _known_hosts
+-rw-r--r--  1 dwdman dwdman   963 Fev 24 04:39 known_hosts
+[dwdman@dpns24 ~]$ cd .ssh/
+[dwdman@dpns24 .ssh]$ ssh-keygen -t ed25519 -C "alana.lima.pontes@gmail.com"
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/dwdman/.ssh/id_ed25519):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/dwdman/.ssh/id_ed25519.
+Your public key has been saved in /home/dwdman/.ssh/id_ed25519.pub.
+The key fingerprint is:
+SHA256:4UWTtkYcAIKx+P4CcTh9OFVupKtLm939Hegj6L/oc/w alana.lima.pontes@gmail.com
+The key's randomart image is:
++--[ED25519 256]--+
+|  .o..+..o+o     |
+| ....=   .=.     |
+|.o.o. o .o..     |
+|+.= .o . oo      |
+| +.o.   S.       |
+|.. .       .     |
+| .+    o  . .    |
+| ..* .oo+... .   |
+|  +.oo=++=E..    |
++----[SHA256]-----+
+[dwdman@dpns24 .ssh]$ ssh-add ~/.ssh/id_ed25519
+Could not open a connection to your authentication agent.
+[dwdman@dpns24 .git]$ cp ~/.bashrc ~/.bashrc.ori
+[dwdman@dpns24 .git]$ vi ~/.bashrc
+
+#############Você pode executar ssh-agent automaticamente quando abre o shell do Bash ou do Git. 
+#############Copie as seguintes linhas e cole-as no arquivo ~/.profile ou ~/.bashrc no shell do Git:
+
+	env=~/.ssh/agent.env
+
+	agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
+
+	agent_start () {
+	    (umask 077; ssh-agent >| "$env")
+    		. "$env" >| /dev/null ; }
+
+	agent_load_env
+
+	# agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
+	agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
+
+	if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
+    		agent_start
+    		ssh-add
+	elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
+    		ssh-add
+	fi
+
+	unset env
+
+[dwdman@dpns24 .git]$ source ~/.bashrc 
+Último login:Ter Jun  4 14:05:55 UTC 2024em pts/0
+Identity added: /home/dwdman/.ssh/id_rsa (/home/dwdman/.ssh/id_rsa)
+Identity added: /home/dwdman/.ssh/id_ed25519 (alana.lima.pontes@gmail.com)
+
+	#AGORA O COMANDO ADD VAI DAR CERTO
+[dwdman@dpns24 ~]$ ssh-add ~/.ssh/id_ed25519
+Identity added: /home/dwdman/.ssh/id_ed25519 (alana.lima.pontes@gmail.com)
+[dwdman@dpns24 ~]$ cat ~/.ssh/id_ed25519.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINwauF1AwrdE+LeZ6tU6N2tQAYSemNBVQWBucMKE7kvC alan                                                                                                                                  a.lima.pontes@gmail.com
+[dwdman@dpns24 ~]$ git remote -v
+origin  https://github.com/chm13git/dwdman_dpns24.git (fetch)
+origin  https://github.com/chm13git/dwdman_dpns24.git (push)
+
+	#IMPORTANTE: O NOME "ORIGIN JA EXISTE, VC DEVE COLOCAR UM NUM PARA DIFERENCIAR, NESSE CASO FOI O Num:2
+
+[dwdman@dpns24 ~]$ git remote add origin2 git@github.com:alanagadelha/dwdman_dpns24.git
+[dwdman@dpns24 ~]$ git push -u origin2 main
+[dwdman@dpns24 ~]$
+
