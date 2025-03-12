@@ -1,4 +1,4 @@
-#!/bin/bash -lx
+#!/bin/bash -l
 
 ################################################################################
 ##   Descricao:
@@ -28,18 +28,16 @@ datacorrente=`cat /home/dwdman/datas/datacorrente${HH}`
 
 case ${GRID} in
    ant)
-   dirdpns24="/backup/dwdinput/data_ant${HH}"
-   dirdpns24_bkp="/backup/icon4iconlam/bkp_ant${HH}"
-#   dirdpns33="/mnt/nfs/dpns33/data1/backup/backup_icon/backup_icondata_ant"
+   dirdpns24="/home/dwdman/dwdinput/data_ant${HH}"
+   dirdpns24_bkp="/home/dwdman/backup/icon4iconlam/bkp_ant${HH}"
    rsyncdir42="admbackup@dpns42:/data2/backup/backup_icon/bkp_input_icon4iconlam_ant"
    mntdir42="/mnt/nfs/dpns42/data2/backup/backup_icon/bkp_input_icon4iconlam_ant"
    filename="icon4iconlamant_"
    ndaystokeep=1
    ;;
    sam)
-   dirdpns24="/backup/dwdinput/data_sam${HH}"
-   dirdpns24_bkp="/backup/icon4iconlam/bkp_sam${HH}"
-#   dirdpns33="/mnt/nfs/dpns33/data1/backup/backup_icon/backup_icondata_met5"
+   dirdpns24="/home/dwdman/dwdinput/data_sam${HH}"
+   dirdpns24_bkp="/home/dwdman/backup/icon4iconlam/bkp_sam${HH}"
    rsyncdir42="admbackup@dpns42:/data2/backup/backup_icon/bkp_input_icon4iconlam_sam"
    mntdir42="/mnt/nfs/dpns42/data2/backup/backup_icon/bkp_input_icon4iconlam_sam"
    filename="icon4iconlamsam_"
@@ -79,9 +77,9 @@ while [ $flag -eq 1 ];do
 		echo "Targeando..."
 		echo 
 		tar -cf ${filename}${datacorrente}${HH}.tar `ls ig?ff0???0000.bz2 icon_new.bz2` 
-		echo "Bunzipando..."
-		echo
-		bzip2 -z ${filename}${datacorrente}${HH}.tar
+		#echo "Bunzipando..."
+		#echo
+		#bzip2 -z ${filename}${datacorrente}${HH}.tar
 		flag=0
 	else
 		echo " WARNING! Dados com data diferente da corrente ($datacorrente)."
