@@ -22,43 +22,36 @@ date = date.today().strftime('%Y%m%d')
 username = 'nwp_brasn'
 password = 'CLqDqTNDrlUKy_BL'
 HOMEDirectory = '/home/dwdman/scripts'
-#DataDir = f"/home/operador/metview/scripts/dwdinput/{date}/data_{AREA}{HH}"
-DataDir = f"/home/dwdman/dwdinput/data_{AREA}{HH}"
-base_url = f"https://data.dwd.de/data/{date}/data_{AREA}{HH}"
+DataDir = f"/home/dwdman/dwdinput/data_{AREA}{HH}" # Diretorio de destino dos dados que serao baixados
+base_url = f"https://data.dwd.de/data/{date}/data_{AREA}{HH}" # URL de origem dos dados que serao baixados
 os.makedirs(DataDir, exist_ok=True)
 
 os.chdir(DataDir)
 
-#file_names = [
-#    "icon_new.bz2"     , "igfff00000000.bz2", "igfff00030000.bz2", "igfff00060000.bz2", 
-#    "igfff00090000.bz2", "igfff00120000.bz2", "igfff00150000.bz2", "igfff00180000.bz2", 
-#    "igfff00210000.bz2", "igfff01000000.bz2", "igfff01030000.bz2", "igfff01060000.bz2", 
-#    "igfff01090000.bz2", "igfff01120000.bz2", "igfff01150000.bz2", "igfff01180000.bz2", 
-#    "igfff01210000.bz2", "igfff02000000.bz2", "igfff02030000.bz2", "igfff02060000.bz2", 
-#    "igfff02090000.bz2", "igfff02120000.bz2", "igfff02150000.bz2", "igfff02180000.bz2", 
-#    "igfff02210000.bz2", "igfff03000000.bz2", "igfff03030000.bz2", "igfff03060000.bz2", 
-#    "igfff03090000.bz2", "igfff03120000.bz2", "igfff03150000.bz2", "igfff03180000.bz2", 
-#    "igfff03210000.bz2", "igfff04000000.bz2", "igfff04030000.bz2", "igfff04060000.bz2", 
-#    "igfff04090000.bz2", "igfff04120000.bz2", "igfff04150000.bz2", "igfff04180000.bz2", 
-#    "igfff04210000.bz2", "igfff05000000.bz2"
-#]
+file_initial = ["icon_new.bz2"]
+min_file_size_initial = 30
 
-file_names = [
-    "igfff00000000.bz2", "igfff00030000.bz2", "igfff00060000.bz2",
-    "igfff00090000.bz2", "igfff00120000.bz2", "igfff00150000.bz2", "igfff00180000.bz2",
-    "igfff00210000.bz2", "igfff01000000.bz2", "igfff01030000.bz2", "igfff01060000.bz2",
-    "igfff01090000.bz2", "igfff01120000.bz2", "igfff01150000.bz2", "igfff01180000.bz2",
-    "igfff01210000.bz2", "igfff02000000.bz2", "igfff02030000.bz2", "igfff02060000.bz2",
-    "igfff02090000.bz2", "igfff02120000.bz2", "igfff02150000.bz2", "igfff02180000.bz2",
-    "igfff02210000.bz2", "igfff03000000.bz2", "igfff03030000.bz2", "igfff03060000.bz2",
-    "igfff03090000.bz2", "igfff03120000.bz2", "igfff03150000.bz2", "igfff03180000.bz2",
-    "igfff03210000.bz2", "igfff04000000.bz2", "igfff04030000.bz2", "igfff04060000.bz2",
-    "igfff04090000.bz2", "igfff04120000.bz2", "igfff04150000.bz2", "igfff04180000.bz2",
-    "igfff04210000.bz2", "igfff05000000.bz2"
-]
+div = 24
+hstart = 0
+hstop=120
 
+file_names=[]
 
-def download_file(base_url, filename, min_file_size=78717419, max_attempts=180):
+# Loop para criar prog de 0 até 48 com intervalo de 3
+for tempo in range(hstart, hstop + 1, 3):  # 49 é limite superior exclusivo
+    HH = tempo % div       # Calcula o resto da divisão
+    DD = tempo // div  # Calcula o quociente da divisão
+
+    # Exibe os resultados
+    filename = f"igfff{DD:02}{HH:02}0000.bz2"
+    file_names.append(filename)
+
+print("file_names=",file_names)
+
+min_file_size = 78717419
+
+#def download_file(base_url, filename, min_file_size=78717419, max_attempts=180):
+def download_file(base_url, filename, min_file_size, max_attempts=180):
     for attempt in range(1, max_attempts + 1):
         response = requests.get(base_url, auth=(username, password), stream=True)
         if response.status_code == 200:
@@ -77,12 +70,19 @@ def download_file(base_url, filename, min_file_size=78717419, max_attempts=180):
     print(f'Failed to download the file after several attempts: {filename}')
     return None
 
+# Baixando o arquivo icon_new.bz2 que tem tamanho muito menor que os outros arquivos
+for file_name in file_initial:
+    file_url = f"{base_url}/{file_name}"
+    now = datetime.now()
+    print(now.strftime("%Y-%m-%d %H:%M:%S"))
+    print(f'Downloading: {file_url}')
+    download_file(file_url, os.path.join(DataDir, file_name), min_file_size_initial)
+
+# Baixando os demais arquivos igfff* para rodar o ICONLAM
 for file_name in file_names:
     file_url = f"{base_url}/{file_name}"
     now = datetime.now()
     print(now.strftime("%Y-%m-%d %H:%M:%S")) 
     print(f'Downloading: {file_url}')
-    download_file(file_url, os.path.join(DataDir, file_name))
-
-
+    download_file(file_url, os.path.join(DataDir, file_name), min_file_size)
 
