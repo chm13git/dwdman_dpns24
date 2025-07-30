@@ -56,24 +56,28 @@ min_file_size = 78717419
 #def download_file(base_url, filename, min_file_size=78717419, max_attempts=180):
 def download_file(base_url, filename, min_file_size, max_attempts=180):
     for attempt in range(1, max_attempts + 1):
+        # 1. Tenta fazer o download
         response = requests.get(base_url, auth=(username, password), stream=True)
+        # 2. Verifica se o servidor respondeu bem
         if response.status_code == 200:
+            # Se sim, ele verifica o tamanho do arquivo:
             total_size = int(response.headers.get('content-length', 0))
+            # Se o tamanho for muito pequeno, ele considera que houve erro, imprime uma mensagem, e espera 60 seg antes da próxima tentativa:
             if total_size < min_file_size:
                 print(f'File size is too small ({total_size} bytes). Attempt {attempt}/{max_attempts}. Retrying in 60 seconds...')
                 time.sleep(60)
+            # Se o tamanho for aceitável, ele salva o conteúdo no disco e encerra a função com sucesso:
             else:
                 with open(filename, 'wb') as f:
                     for data in response.iter_content(chunk_size=1024):
                         f.write(data)
                 print(f'Download successful: {filename}')
                 return filename
+        # Se o servidor respondeu com erro (ex: 404, 403...)
         else:
             print(f'Error downloading file (attempt {attempt}/{max_attempts}). Status code: {response.status_code}. Retrying in 60 seconds...')
             time.sleep(60)
-        if attempt > max_attempts:
-            print(f'Failed to download the file after several attempts: {filename}')
-            exit()
+    print(f'Failed to download the file after several attempts: {filename}')
     return None
 
 # Baixando o arquivo icon_new.bz2 que tem tamanho muito menor que os outros arquivos
