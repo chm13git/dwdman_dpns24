@@ -30,14 +30,15 @@ os.makedirs(DataDir, exist_ok=True)
 
 os.chdir(DataDir)
 
-file_initial = ["icon_new.bz2"]
-min_file_size_initial = 30
-
 div = 24
 hstart = HSTART
 hstop = HSTOP
 
 file_names=[]
+
+# Definindo arquivo inicial
+file_initial = ["icon_new.bz2"]
+min_file_size_initial = 30
 
 # Loop para criar prog de 0 até 48 com intervalo de 3
 for tempo in range(hstart, hstop + 1, 3):  # 49 é limite superior exclusivo
@@ -48,7 +49,7 @@ for tempo in range(hstart, hstop + 1, 3):  # 49 é limite superior exclusivo
     filename = f"igfff{DD:02}{HH:02}0000.bz2"
     file_names.append(filename)
 
-print("file_names=",file_names)
+print("file_names=",file_initial,file_names)
 
 min_file_size = 78717419
 
@@ -72,7 +73,7 @@ def download_file(base_url, filename, min_file_size, max_attempts=180):
             time.sleep(60)
         if attempt > max_attempts:
             print(f'Failed to download the file after several attempts: {filename}')
-            stop()
+            exit()
     return None
 
 # Baixando o arquivo icon_new.bz2 que tem tamanho muito menor que os outros arquivos
