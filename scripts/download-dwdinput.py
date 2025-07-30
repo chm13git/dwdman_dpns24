@@ -10,15 +10,17 @@ import time
 import subprocess
 
 # Main script execution
-if len(sys.argv) < 3:
+if len(sys.argv) < 5:
     print('Insufficient arguments. Usage:')
-    print('download_dwdinput.py HH AREA')
+    print(f'{sys.argv[0]} HH AREA HSTART HSTOP')
     sys.exit(1)
 
 HH = sys.argv[1]
 AREA = sys.argv[2]
+HSTART = int(sys.argv[3])
+HSTOP = int(sys.argv[4])
 date = date.today().strftime('%Y%m%d')
-#date = "20250326"
+#date = "20250704"
 username = 'nwp_brasn'
 password = 'CLqDqTNDrlUKy_BL'
 HOMEDirectory = '/home/dwdman/scripts'
@@ -32,8 +34,8 @@ file_initial = ["icon_new.bz2"]
 min_file_size_initial = 30
 
 div = 24
-hstart = 0
-hstop=120
+hstart = HSTART
+hstop = HSTOP
 
 file_names=[]
 
@@ -58,6 +60,7 @@ def download_file(base_url, filename, min_file_size, max_attempts=180):
             total_size = int(response.headers.get('content-length', 0))
             if total_size < min_file_size:
                 print(f'File size is too small ({total_size} bytes). Attempt {attempt}/{max_attempts}. Retrying in 60 seconds...')
+                time.sleep(60)
             else:
                 with open(filename, 'wb') as f:
                     for data in response.iter_content(chunk_size=1024):
@@ -66,8 +69,10 @@ def download_file(base_url, filename, min_file_size, max_attempts=180):
                 return filename
         else:
             print(f'Error downloading file (attempt {attempt}/{max_attempts}). Status code: {response.status_code}. Retrying in 60 seconds...')
-        time.sleep(60)
-    print(f'Failed to download the file after several attempts: {filename}')
+            time.sleep(60)
+        if attempt > max_attempts:
+            print(f'Failed to download the file after several attempts: {filename}')
+            stop()
     return None
 
 # Baixando o arquivo icon_new.bz2 que tem tamanho muito menor que os outros arquivos
