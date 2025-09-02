@@ -40,8 +40,16 @@ file_names=[]
 file_initial = ["icon_new.bz2"]
 min_file_size_initial = 30
 
-# Loop para criar prog de 0 até 48 com intervalo de 3
-for tempo in range(hstart, hstop + 1, 3):  # 49 é limite superior exclusivo
+# Loop para criar prog de hstart até hstop com intervalo de 1 em 1 até 48h e de 3 em 3 de 48h am diante.
+#for tempo in range(hstart, hstop + 1, 3):
+tempo = hstart
+while tempo <= hstop:
+    print(tempo)
+    if tempo < 48 and AREA == "sam":
+        tempo += 1
+    else:
+        tempo += 3
+
     HH = tempo % div       # Calcula o resto da divisão
     DD = tempo // div  # Calcula o quociente da divisão
 
