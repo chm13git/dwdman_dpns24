@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/bash -lx
 
 ################################################################################
 ##   Descricao:
@@ -33,6 +33,7 @@ case ${GRID} in
    rsyncdir42="admbackup@dpns42:/data2/backup/backup_icon/bkp_input_icon4iconlam_ant"
    mntdir42="/mnt/nfs/dpns42/data2/backup/backup_icon/bkp_input_icon4iconlam_ant"
    filename="icon4iconlamant_"
+   min_file_size=3234861893
    ndaystokeep=1
    ;;
    sam)
@@ -41,6 +42,7 @@ case ${GRID} in
    rsyncdir42="admbackup@dpns42:/data2/backup/backup_icon/bkp_input_icon4iconlam_sam"
    mntdir42="/mnt/nfs/dpns42/data2/backup/backup_icon/bkp_input_icon4iconlam_sam"
    filename="icon4iconlamsam_"
+   min_file_size=12994978022
    ndaystokeep=1
    ;;
 esac
@@ -76,10 +78,7 @@ while [ $flag -eq 1 ];do
 		echo
 		echo "Targeando..."
 		echo 
-		tar -cf ${filename}${datacorrente}${HH}.tar `ls ig?ff0???0000.bz2 icon_new.bz2` 
-		#echo "Bunzipando..."
-		#echo
-		#bzip2 -z ${filename}${datacorrente}${HH}.tar
+		tar -cf ${filename}${datacorrente}${HH}.tar.bz2 `ls ig?ff0???0000.bz2 icon_new.bz2` 
 		flag=0
 	else
 		echo " WARNING! Dados com data diferente da corrente ($datacorrente)."
@@ -104,7 +103,7 @@ rm icon_new.bz2
 echo
 echo " Transferindo os dados para dpns42..."
 echo
-rsync -av --ignore-existing ${dirdpns24_bkp}/*.tar.bz2 ${rsyncdir42}/
+rsync -av --progress --size-only ${dirdpns24_bkp}/*.tar.bz2 ${rsyncdir42}/
 echo
 echo "============================================================="
 echo " Verificando os arquivos antigos "
